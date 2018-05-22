@@ -1933,7 +1933,7 @@ sub add_response {
     }
 
     my $dbservice = $db->{dbservice};
-    my $dbname    = defined $db->{dbname} ? qq{DB "$db->{dbname}"} : '';
+    my $dbname    = defined $db->{dbname} ? qq{\nDB "$db->{dbname}"} : '';
     my $dbhost    = (!$db->{host} or $db->{host} eq '<none>') ? '' : qq{ (host:$db->{host})};
     my $dbport    = defined $db->{port} ? ($db->{port} eq $opt{defaultport} ? '' : qq{ (port=$db->{port}) }) : '';
 
@@ -2103,7 +2103,7 @@ sub do_mrtg_stats {
     for (sort { $stats{$b} <=> $stats{$a} } keys %stats) {
         if ($one eq '') {
             $one = $stats{$_};
-            $msg = exists $statsmsg{$_} ? $statsmsg{$_} : "DB: $_";
+            $msg = exists $statsmsg{$_} ? $statsmsg{$_} : "\nDB: $_";
             next;
         }
         $two = $stats{$_};
@@ -2226,7 +2226,7 @@ sub finishup {
                 $pmsg .= $m;
             }
             $pmsg =~ s/^\s+//;
-            $pmsg and print "| $pmsg";
+            $pmsg and print "\n| $pmsg";
         }
         print "\n";
 
@@ -5658,12 +5658,12 @@ FROM (SELECT nspname, relname, $criteria AS v
             }
             if ($time > $maxtime) {
                 $maxtime = $time;
-                $maxrel = "DB: $dbname TABLE: $schema.$name";
+                $maxrel = "\n\t DB: $dbname TABLE: $schema.$name";
                 $maxptime = $ptime;
             }
             if ($time > 0 and ($time < $mintime or !$mintime)) {
                 $mintime = $time;
-                $minrel = "DB: $dbname TABLE: $schema.$name";
+                $minrel = "\n\tDB: $dbname TABLE: $schema.$name";
             }
             if ($opt{perflimit}) {
                 last if ++$count >= $opt{perflimit};
@@ -7402,7 +7402,6 @@ sub check_same_schema {
         add_ok msg('ss-matched');
         return;
     }
-
     $db->{perf} = "\n$msg";
     add_critical msg('ss-failed', $opt{failcount});
     return;
